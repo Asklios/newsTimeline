@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  get_data:
+    build: .
+    restart: unless-stopped
+    container_name: news_collector
+    volumes:
+    - news_database:/app/data
+
+volumes:
+  news_database:
+    external: true
