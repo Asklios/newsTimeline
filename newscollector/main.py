@@ -2,8 +2,7 @@ import asyncio
 import re
 import requests
 from bs4 import BeautifulSoup
-from sqlite3 import Connection
-import sqlite_helper
+import postgres_helper
 import time
 import schedule as schedule
 from datetime import datetime
@@ -30,14 +29,14 @@ async def get_words_from_url(url):
 
 
 async def main():
-    conn: Connection = sqlite_helper.create_connection('data/database.db')
-    sqlite_helper.create_missing_tables(conn)
+    postgres_helper.print_version()
+    postgres_helper.create_missing_tables()
     timestamp: datetime = datetime.now()
     for url in urls:
         print("reading news from \"" + url + "\".")
         text = await get_words_from_url(urls[url])
         print(text)
-        sqlite_helper.save_complete_news(conn, timestamp, url, urls[url], text)
+        postgres_helper.save_complete_news(timestamp, url, urls[url], text)
 
 
 class Main:
