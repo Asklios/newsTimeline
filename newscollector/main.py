@@ -7,6 +7,8 @@ import time
 import schedule as schedule
 from datetime import datetime
 
+print("Starting news collector")
+
 urls: dict[str, str] = {
     "heute": "https://www.zdf.de/nachrichten/",
     "tagesschau": "https://www.tagesschau.de/",

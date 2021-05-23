@@ -5,7 +5,6 @@ services:
     image: postgres
     container_name: news_database
     restart: unless-stopped
-    hostname: 127.0.0.1
     volumes:
       - news_database:/var/lib/postgresql/data
     ports:
@@ -17,7 +16,8 @@ services:
       - backend
 
   newscollector:
-    build: .
+    build: newscollector
+    image: newscollector:latest
     restart: unless-stopped
     container_name: news_collector
     networks:
