@@ -9,4 +9,4 @@ RUN /opt/venv/bin/pip install -r requirements.txt
 
 COPY . .
 
-CMD ["/opt/venv/bin/python", "/app/main.py"]
+CMD ["/opt/venv/bin/python", "/app/cleanup_main.py"]

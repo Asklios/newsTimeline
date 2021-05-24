@@ -36,15 +36,3 @@ def save_complete_news(time: datetime, source: str, source_url: str, content: st
     cur.execute("INSERT INTO news_complete(time, source, source_url, content) VALUES (%s, %s, %s, %s)", data)
     conn.commit()
     cur.close()
-
-
-def print_complete_news():
-    params = config()
-    conn: Connection = pg8000.dbapi.Connection(**params)
-    cur = conn.cursor()
-    cur.execute("SELECT id, time, source, source_url, content FROM news_complete ORDER BY id")
-    row = cur.fetchone()
-    while row is not None:
-        print(row)
-        row = cur.fetchone()
-    cur.close()

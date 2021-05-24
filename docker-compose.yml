@@ -9,9 +9,8 @@ services:
       - news_database:/var/lib/postgresql/data
     ports:
     - 5432:5432
-    environment:
-      POSTGRES_USER: 'news'
-      POSTGRES_PASSWORD: "example"
+    env_file:
+        - database.env
     networks:
       - backend
 
@@ -20,6 +19,16 @@ services:
     image: newscollector:latest
     restart: unless-stopped
     container_name: news_collector
+    networks:
+      - backend
+    depends_on:
+      - database
+
+  newscleanup:
+    build: newscleanup
+    image: newscleanup:latest
+    restart: unless-stopped
+    container_name: news_cleanup
     networks:
       - backend
     depends_on:

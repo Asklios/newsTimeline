@@ -1,4 +1,5 @@
 data
 .idea
 venv
-newscollector/database.ini
+database.ini
+database.env
