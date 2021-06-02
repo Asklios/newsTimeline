@@ -2,10 +2,12 @@ import asyncio
 import re
 import requests
 from bs4 import BeautifulSoup
-import postgres_helper
 import time
 import schedule as schedule
 from datetime import datetime
+
+import postgres_helper
+import news_cleanup
 
 print("Starting news collector")
 
@@ -44,7 +46,8 @@ class Main:
     def __init__(self, name):
         self.name = name
         print(datetime.now())
-        asyncio.run(main())
+        await asyncio.run(main())
+        news_cleanup.cleanup()
 
 
 class Schedule:

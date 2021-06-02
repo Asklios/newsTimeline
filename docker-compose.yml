@@ -24,16 +24,6 @@ services:
     depends_on:
       - database
 
-  newscleanup:
-    build: newscleanup
-    image: newscleanup:latest
-    restart: unless-stopped
-    container_name: news_cleanup
-    networks:
-      - backend
-    depends_on:
-      - database
-
 volumes:
   news_database:
     external: true
