@@ -9,15 +9,14 @@ from datetime import datetime
 
 print("Starting news collector")
 
-urls: dict[str, str] = {
-    "heute": "https://www.zdf.de/nachrichten/",
-    "tagesschau": "https://www.tagesschau.de/",
-    "sueddeutsche": "https://www.sueddeutsche.de/",
-    "faz": "https://www.faz.net/aktuell/",
-    "taz": "https://taz.de/",
-    "zeit": "https://www.zeit.de/index",
-    "welt": "https://www.welt.de/"
-}
+urls: dict[str, str] = {}
+
+postgres_helper.create_missing_tables()
+sources = postgres_helper.get_news_sources()
+for s in sources:
+    urls[s[0]] = s[1]
+
+print("looking for " + str(len(urls)) + " sources")
 
 
 async def get_words_from_url(url):

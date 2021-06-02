@@ -1,9 +1,19 @@
 import re
-
+from datetime import datetime
 import pg8000.dbapi
 from pg8000 import Connection
 
 from config import config
+
+
+def print_version():
+    params = config()
+    conn: Connection = pg8000.dbapi.Connection(**params)
+    cur = conn.cursor()
+    cur.execute('SELECT version()')
+    print("Connected to database")
+    print(cur.fetchone())
+    conn.close()
 
 
 def get_complete_news():
@@ -61,6 +71,7 @@ def get_tree_days_of_complete_news():
                 "ORDER BY source ASC, time;")
     result = cur.fetchall()
     cur.close()
+    conn.close()
     return result
 
 
@@ -79,6 +90,7 @@ def get_complete_news_by_source(source: str):
                 "ORDER BY time ASC", (source,))
     result = cur.fetchall()
     cur.close()
+    conn.close()
     return result
 
 
@@ -97,6 +109,7 @@ def get_latest_complete_news_by_source(source: str):
                 "ORDER BY time ASC LIMIT 1", (source,))
     result = cur.fetchall()
     cur.close()
+    conn.close()
     return result
 
 
@@ -115,6 +128,7 @@ def get_one_day_of_complete_news_by_source(source: str):
                 "ORDER BY time ASC LIMIT 4", (source,))
     result = cur.fetchall()
     cur.close()
+    conn.close()
     return result
 
 
@@ -133,6 +147,7 @@ def get_tree_days_of_complete_news_by_source(source: str):
                 "ORDER BY time ASC LIMIT 12", (source,))
     result = cur.fetchall()
     cur.close()
+    conn.close()
     return result
 
 
@@ -151,6 +166,7 @@ def get_one_week_of_complete_news_by_source(source: str):
                 "ORDER BY time ASC LIMIT 28", (source,))
     result = cur.fetchall()
     cur.close()
+    conn.close()
     return result
 
 
@@ -186,4 +202,53 @@ def get_complete_news_by_date(date: str):
                 "ORDER BY time", (date,))
     result = cur.fetchall()
     cur.close()
+    conn.close()
     return result
+
+
+def create_missing_tables():
+    """
+    Adds possibly missing tables to the database. [news_clean_uppercase]
+    """
+    params = config()
+    conn: Connection = pg8000.dbapi.Connection(**params)
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS news_clean_uppercase("
+                "id SERIAL PRIMARY KEY,"
+                "id_complete_news BIGINT,"
+                "time TEXT,"
+                "source TEXT,"
+                "source_url TEXT,"
+                "content TEXT)")
+    conn.commit()
+    cur.close()
+    conn.close()
+    print("Created missing database tables")
+
+
+def save_cleaned_news(id_complete_news, time: datetime, source: str, source_url: str, content: str):
+    """
+    Inserts one row into the news_clean_uppercase table. Ignores input if the id_complete_news exists.
+
+    :param id_complete_news: row id from news_complete
+    :param time: datetime from news_complete
+    :param source: source from news_complete
+    :param source_url: source_url from news_complete
+    :param content: cleaned uppercase content
+    """
+    params = config()
+    conn: Connection = pg8000.dbapi.Connection(**params)
+    cur = conn.cursor()
+    cur.execute("SELECT id_complete_news FROM news_clean_uppercase WHERE id_complete_news=%s", (id_complete_news,))
+    r = cur.fetchone()
+
+    if r is None:
+        cur.close()
+
+        cur = conn.cursor()
+        data = (id_complete_news, time, source, source_url, content)
+        cur.execute("INSERT INTO news_clean_uppercase(id_complete_news, time, source, source_url, content) "
+                    "VALUES (%s, %s, %s, %s, %s)", data)
+        conn.commit()
+        cur.close()
+        conn.close()

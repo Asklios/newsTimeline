@@ -36,7 +36,7 @@ services:
 
 volumes:
   news_database:
-    external: false
+    external: true
 
 networks:
   backend:
