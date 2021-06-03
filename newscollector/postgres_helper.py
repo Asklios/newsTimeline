@@ -96,6 +96,7 @@ def get_complete_news():
     cur.execute("SELECT id, time, source, source_url, content FROM news_complete ORDER BY id")
     result: tuple = cur.fetchall()
     cur.close()
+    conn.close()
     return result
 
 
@@ -112,6 +113,7 @@ def get_all_sources():
     cur.execute("SELECT DISTINCT(source) FROM news_complete ORDER BY source")
     result = cur.fetchall()
     cur.close()
+    conn.close()
     return result
 
 
@@ -297,5 +299,5 @@ def save_cleaned_news(id_complete_news, time: datetime, source: str, source_url:
         cur.execute("INSERT INTO news_clean_uppercase(id_complete_news, time, source, source_url, content) "
                     "VALUES (%s, %s, %s, %s, %s)", data)
         conn.commit()
-        cur.close()
-        conn.close()
+    cur.close()
+    conn.close()

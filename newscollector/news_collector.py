@@ -38,16 +38,18 @@ async def main():
     for url in urls:
         print("reading news from \"" + url + "\".")
         text = await get_words_from_url(urls[url])
-        print(text)
         postgres_helper.save_complete_news(timestamp, url, urls[url], text)
 
 
 class Main:
     def __init__(self, name):
         self.name = name
+        print("---Start new run---")
         print(datetime.now())
-        await asyncio.run(main())
+        asyncio.run(main())
+        print("starting cleanup")
         news_cleanup.cleanup()
+        print("---Run finished---")
 
 
 class Schedule:
